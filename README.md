@@ -1,1 +1,1 @@
-# lab_6_web
+# lab_7_web
