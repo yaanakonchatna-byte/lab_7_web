@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Випадковий Жарт (Дві Кнопки)</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f4f4f9; }
+        .container { background-color: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; max-width: 600px; }
+        h1 { color: #333; }
+        #joke-display { margin-top: 20px; font-size: 1.2em; min-height: 50px; padding: 15px; border: 1px dashed #ccc; background-color: #e9ecef; border-radius: 5px; }
+        .button-group { margin-top: 20px; }
+        /* Стиль для кнопки "Почати" (відмінний колір) */
+        #start-joke-btn { padding: 10px 20px; font-size: 1em; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px; transition: background-color 0.3s; }
+        #start-joke-btn:hover { background-color: #0056b3; }
+        /* Стиль для кнопки "Новий Жарт" */
+        #load-joke-btn { padding: 10px 20px; font-size: 1em; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+        #load-joke-btn:hover { background-color: #1e7e34; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1> Випадковий Жарт </h1>
+        <div id="joke-display">Натисніть "Почати", щоб завантажити перший жарт!</div>
+        
+        <div class="button-group">
+            <button id="start-joke-btn">Почати (Перший Жарт)</button>
+            <button id="load-joke-btn">Показати Новий Жарт</button>
+        </div>
+
+    </div>
+    
+    <script>
+        // Функція, яка завантажує файл і відображає жарт (як була раніше)
+        function loadAndDisplayJoke() {
+            const jokeDisplay = $("#joke-display");
+            jokeDisplay.text('Завантаження...');
+
+            $.get('jokes.txt', function(data) {
+                const jokes = data.split(/\r?\n/).filter(joke => joke.trim() !== '');
+
+                if (jokes.length === 0) {
+                    jokeDisplay.text('У файлі немає жартів!');
+                    return;
+                }
+
+                const randomIndex = Math.floor(Math.random() * jokes.length);
+                jokeDisplay.text(jokes[randomIndex]);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.error('Сталася помилка при завантаженні жарту:', textStatus, errorThrown);
+                jokeDisplay.text(`Помилка: Не вдалося завантажити jokes.txt.`);
+            });
+        }
+
+        $(document).ready(function() {
+            
+            // 1. Обробник для кнопки "Почати (Перший Жарт)"
+            $("#start-joke-btn").on("click", function() {
+                loadAndDisplayJoke();
+                // Можемо приховати або вимкнути кнопку "Почати" після першого кліку
+                $(this).hide(); 
+            });
+
+            // 2. Обробник для кнопки "Показати Новий Жарт" (повторний виклик)
+            $("#load-joke-btn").on("click", function() {
+                loadAndDisplayJoke();
+            });
+
+        });
+    </script>
+</body>
+</html>
